@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backend Web Mashup</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <h1>Backend Web Mashup</h1>
+    
+    <label for="query">Enter an ingredient or dish:</label>
+    <input type="text" id="query" />
+    <button class="button" onclick="findRecipe()">Find Recipe</button>
+
+    <div id="result">
+        <h2>Recipe</h2>
+        <p id="recipe"></p>
+        <img id="image" src="">
+    </div>
+
+    <button class="redirect-button" onclick="redirectTo('/frontend-mashup')">Go to Frontend Mashup</button>
+
+    <script>
+        function findRecipe() {
+            const query = document.getElementById('query').value;
+            const apiUrl = `/api/recipe/${query}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const recipeElement = document.getElementById('recipe');
+                    const imageElement = document.getElementById('image');
+
+                    if (data.error) {
+                        recipeElement.innerHTML = data.error;
+                        imageElement.src = "";
+                    } else {
+                        recipeElement.innerHTML = `<strong>${data.label}</strong><br>Ingredients: ${data.ingredients.join(', ')}`;
+                        imageElement.src = data.image;
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function redirectTo(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

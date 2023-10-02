@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend Web Mashup</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <h1>Frontend Web Mashup</h1>
+    
+    <label for="query">Enter an ingredient or dish:</label>
+    <input type="text" id="query" />
+    <button class="button" onclick="findRecipe()">Find Recipe</button>
+
+    <div id="result">
+        <h2>Recipe</h2>
+        <p id="recipe"></p>
+        <img id="image" src="">
+    </div>
+
+    <button class="redirect-button" onclick="redirectTo('/backend-mashup')">Go to Backend Mashup</button>
+
+    <script>
+        function findRecipe() {
+            const query = document.getElementById('query').value;
+
+            const recipeUrl = `https://api.edamam.com/search?q=${query}&app_id=4097f9dd&app_key=3220831cbd46efe49d9481edcec53a36`;
+
+            fetch(recipeUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const recipeElement = document.getElementById('recipe');
+                    const imageElement = document.getElementById('image');
+
+                    if (data.hits.length > 0) {
+                        const recipe = data.hits[0].recipe;
+                        const imageUrl = `https://source.unsplash.com/400x300/?${query}`;
+
+                        recipeElement.innerHTML = `<strong>${recipe.label}</strong><br>Ingredients: ${recipe.ingredientLines.join(', ')}`;
+                        imageElement.src = imageUrl;
+                    } else {
+                        recipeElement.innerHTML = "No recipes found.";
+                        imageElement.src = "";
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function redirectTo(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
